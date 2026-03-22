@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FB Reels Cleaner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #16161a;
+      --border: #2a2a35;
+      --accent: #ff3c5f;
+      --accent2: #ff8a50;
+      --green: #2dffb4;
+      --warn: #ffc94d;
+      --text: #f0eeff;
+      --muted: #7a7a99;
+      --radius: 12px;
+    }
+
+    body {
+      width: 340px;
+      min-height: 480px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1a0010 0%, #0d0d1f 100%);
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(255,60,95,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 16px rgba(255,60,95,0.4);
+      flex-shrink: 0;
+    }
+    .logo-text h1 {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1;
+      color: var(--text);
+    }
+    .logo-text span {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+    .brand-link {
+      font-size: 10px;
+      color: #ff8a50;
+      font-family: 'DM Mono', monospace;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+    }
+    .brand-link:hover { text-decoration: underline; }
+
+    /* Counter bar */
+    .counter-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 20px 0;
+      margin-top: 6px;
+    }
+    .counter {
+      text-align: center;
+    }
+    .counter-val {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .counter-val.red { color: var(--accent); }
+    .counter-val.muted { color: var(--warn); }
+    .counter-label {
+      font-size: 9px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 20px 0;
+    }
+
+    /* Sections */
+    .section {
+      padding: 14px 20px 0;
+    }
+    .section-label {
+      font-size: 9px;
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Instruction box */
+    .instruction {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .instruction strong {
+      color: var(--accent2);
+      font-weight: 500;
+    }
+    .instruction a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 11px 16px;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.06);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn:hover::after { opacity: 1; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #c41a3a, var(--accent));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(255,60,95,0.3);
+    }
+    .btn-danger:hover {
+      box-shadow: 0 6px 24px rgba(255,60,95,0.5);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+    .btn-outline:hover {
+      background: rgba(255,138,80,0.1);
+    }
+
+    .btn-stop {
+      background: transparent;
+      border: 1px solid #444;
+      color: var(--muted);
+    }
+    .btn-stop:hover {
+      border-color: var(--warn);
+      color: var(--warn);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn:disabled::after { display: none; }
+
+    /* Pulse dot */
+    .pulse {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* Status log */
+    .status-wrap {
+      margin: 12px 20px 0;
+    }
+    .status-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      height: 90px;
+      overflow-y: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+    .status-box::-webkit-scrollbar { width: 3px; }
+    .status-box::-webkit-scrollbar-track { background: transparent; }
+    .status-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .log-line {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+      padding: 1px 0;
+    }
+    .log-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .log-dot.info { background: #6699ff; }
+    .log-dot.success { background: var(--green); }
+    .log-dot.warn { background: var(--warn); }
+    .log-dot.error { background: var(--accent); }
+    .log-text.success { color: var(--green); }
+    .log-text.warn { color: var(--warn); }
+    .log-text.error { color: var(--accent); }
+    .log-text { color: var(--muted); flex: 1; }
+
+    /* Footer */
+    .footer {
+      padding: 12px 20px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-note {
+      font-size: 9px;
+      font-family: 'DM Mono', monospace;
+      color: #3a3a55;
+    }
+    .indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+    }
+    .indicator-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .indicator-dot.active {
+      background: var(--green);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    /* Running state */
+    body.running .btn-danger { opacity: 0.4; pointer-events: none; }
+    body.running .btn-outline { opacity: 0.4; pointer-events: none; }
+    body.running .btn-stop { border-color: var(--warn); color: var(--warn); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🗑️</div>
+      <div class="logo-text">
+        <h1>FB Reels Cleaner</h1>
+        <span>by <a href="https://stacknix.dev" target="_blank" class="brand-link">stacknix.dev</a></span>
+      </div>
+    </div>
+    <div class="counter-bar">
+      <div class="counter">
+        <div class="counter-val red" id="cnt-deleted">0</div>
+        <div class="counter-label">Deleted</div>
+      </div>
+      <div class="counter">
+        <div class="counter-val muted" id="cnt-skipped">0</div>
+        <div class="counter-label">Skipped</div>
+      </div>
+      <div class="counter">
+        <div class="counter-val" id="cnt-total" style="color: var(--muted)">—</div>
+        <div class="counter-label">Session</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Log section -->
+  <div class="section">
+    <div class="section-label">📋 Activity Log Mode</div>
+    <div class="instruction">
+      Go to <strong>facebook.com/your-profile/allactivity</strong> → filter <strong>Reels</strong> → then click below.
+      <br><a href="https://www.facebook.com/profile.php?sk=allactivity&category=REELS_VIDEOS" target="_blank">→ Open Activity Log (Reels)</a>
+    </div>
+    <button class="btn btn-danger" id="btn-delete-all">
+      <span>⚡</span> Delete ALL Reels
+    </button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Reel Viewer section -->
+  <div class="section">
+    <div class="section-label">🎬 Reel Viewer Mode</div>
+    <div class="instruction">
+      Open any Reel you posted. Use buttons below to delete & navigate.
+    </div>
+    <button class="btn btn-outline" id="btn-delete-one">
+      <span>↩</span> Delete This + Go Next
+    </button>
+    <button class="btn btn-secondary" id="btn-auto-viewing">
+      <span>▶</span> Auto-Delete While Viewing
+    </button>
+  </div>
+
+  <!-- Stop + Debug -->
+  <div class="section" style="padding-top:10px; display:flex; gap:8px;">
+    <button class="btn btn-stop" id="btn-stop" style="flex:2">
+      ⬛ Stop
+    </button>
+    <button class="btn btn-secondary" id="btn-debug" style="flex:1; font-size:11px;">
+      🔍 Scan
+    </button>
+  </div>
+
+  <!-- Status log -->
+  <div class="status-wrap">
+    <div class="status-box" id="status-box">
+      <div class="log-line">
+        <div class="log-dot info"></div>
+        <div class="log-text">Ready. Open Facebook first.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer-note">stacknix.dev • cannot be undone</span>
+    <div class="indicator">
+      <div class="indicator-dot" id="indicator-dot"></div>
+      <span id="indicator-text">idle</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
